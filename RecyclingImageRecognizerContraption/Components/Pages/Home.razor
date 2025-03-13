@@ -4,7 +4,7 @@
 @inject IJSRuntime JS
 
 @code{
-    private string imagePath;
+    private string? imagePath;
 
     private async Task TakePhoto()
     {
@@ -22,7 +22,7 @@
     }
 }
 
-<button @onclick="TakePhoto">Take Photo</button>
+
 
 @if (!string.IsNullOrEmpty(imagePath))
 {
@@ -30,3 +30,8 @@
 }
 
 <h1>Recycling Recognition app</h1>
+
+
+<div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);">
+    <button @onclick="TakePhoto" style="padding: 10px 20px; font-size: 18px;">Take Photo</button>
+</div>
