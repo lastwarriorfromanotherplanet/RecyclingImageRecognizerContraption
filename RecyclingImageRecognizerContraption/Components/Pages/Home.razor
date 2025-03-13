@@ -1,0 +1,32 @@
+﻿@page "/"
+
+
+@inject IJSRuntime JS
+
+@code{
+    private string imagePath;
+
+    private async Task TakePhoto()
+    {
+        var photo = await MediaPicker.CapturePhotoAsync();
+        if (photo != null)
+        {
+            var stream = await photo.OpenReadAsync();
+            var filePath = Path.Combine(FileSystem.CacheDirectory, photo.FileName);
+
+            using var fileStream = File.OpenWrite(filePath);
+            await stream.CopyToAsync(fileStream);
+
+            imagePath = filePath;
+        }
+    }
+}
+
+<button @onclick="TakePhoto">Take Photo</button>
+
+@if (!string.IsNullOrEmpty(imagePath))
+{
+    <img src="@imagePath" alt="Captured Photo" style="width: 200px;" />
+}
+
+<h1>Recycling Recognition app</h1>
