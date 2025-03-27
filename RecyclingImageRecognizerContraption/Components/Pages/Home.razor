@@ -1,22 +1,19 @@
-﻿@page "/"
+@page "/"
 @inject AppDbContext DbContext
 @inject IJSRuntime JS
 
 @using Microsoft.EntityFrameworkCore;
 @using RecyclingImageRecognizerContraption.Components.Data;
 
-
-
-@code{
+@code {
     private List<Borden> BordenItems = new();
+    private string? imagePath;
+    private string? locationInfo;
 
     protected override async Task OnInitializedAsync()
     {
         BordenItems = await DbContext.BordenRecyclable.ToListAsync();
     }
-
-
-    private string? imagePath;
 
     private async Task TakePhoto()
     {
@@ -26,22 +23,44 @@
             var stream = await photo.OpenReadAsync();
             var filePath = Path.Combine(FileSystem.CacheDirectory, photo.FileName);
 
-            using var fileStream = File.OpenWrite(filePath);
-            await stream.CopyToAsync(fileStream);
+            using (var fileStream = File.OpenWrite(filePath))
+            {
+                await stream.CopyToAsync(fileStream);
+            }
 
             imagePath = filePath;
+            ExtractLocationMetadata(filePath);
+        }
+    }
+
+    private void ExtractLocationMetadata(string filePath)
+    {
+        try
+        {
+            using var stream = File.OpenRead(filePath);
+            var gpsDirectory = MetadataExtractor.ImageMetadataReader
+                .ReadMetadata(stream)
+                .OfType<MetadataExtractor.Formats.Exif.GpsDirectory>()
+                .FirstOrDefault();
+
+            locationInfo = gpsDirectory?.GetGeoLocation() is { } geoLocation
+                ? $"Latitude: {geoLocation.Latitude}, Longitude: {geoLocation.Longitude}"
+                : "No GPS data available.";
+        }
+        catch (Exception ex)
+        {
+            locationInfo = $"Error reading metadata: {ex.Message}";
         }
     }
 }
 
-
+<h1>Recycling Recognition App</h1>
 
 @if (!string.IsNullOrEmpty(imagePath))
 {
-    <img src="@imagePath" alt="Captured Photo" style="width: 200px;" />
+    <!-- <img src="@imagePath" alt="Captured Photo" style="width: 200px;" /> -->
+    <p>@locationInfo</p>
 }
-
-<h1>Recycling Recognition app</h1>
 
 <ul>
     @foreach (var item in BordenItems)
@@ -49,7 +68,6 @@
         <li>@item.Name - @item.Category - @item.Instructions</li>
     }
 </ul>
-
 
 <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);">
     <button @onclick="TakePhoto" style="padding: 10px 20px; font-size: 18px;">Take Photo</button>
