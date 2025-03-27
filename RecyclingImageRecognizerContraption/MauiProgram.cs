@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using RecyclingImageRecognizerContraption.Components.Data;
 
 namespace RecyclingImageRecognizerContraption
 {
@@ -18,6 +21,22 @@ namespace RecyclingImageRecognizerContraption
 
             builder.Services.AddLogging();
             builder.Services.AddSingleton(MediaPicker.Default);
+
+            builder.Services.AddSingleton<AppDbContext>();
+
+            var app = builder.Build();
+
+            //android db check
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                db.InitializeDatabase().Wait();
+            }
+
+            //string dbPath = Path.Combine(FileSystem.AppDataDirectory, "recycle.db");
+            //builder.Services.AddDbContext<AppDbContext>(options =>
+            //    options.UseSqlite($"Data Source={dbPath}"));
+
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

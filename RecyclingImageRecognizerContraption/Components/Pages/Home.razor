@@ -1,10 +1,19 @@
-﻿@page "/"
-
+@page "/"
+@inject AppDbContext DbContext
 @inject IJSRuntime JS
 
+@using Microsoft.EntityFrameworkCore;
+@using RecyclingImageRecognizerContraption.Components.Data;
+
 @code {
+    private List<Borden> BordenItems = new();
     private string? imagePath;
     private string? locationInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        BordenItems = await DbContext.BordenRecyclable.ToListAsync();
+    }
 
     private async Task TakePhoto()
     {
@@ -43,8 +52,6 @@
             locationInfo = $"Error reading metadata: {ex.Message}";
         }
     }
-
-
 }
 
 <h1>Recycling Recognition App</h1>
@@ -54,6 +61,13 @@
     <!-- <img src="@imagePath" alt="Captured Photo" style="width: 200px;" /> -->
     <p>@locationInfo</p>
 }
+
+<ul>
+    @foreach (var item in BordenItems)
+    {
+        <li>@item.Name - @item.Category - @item.Instructions</li>
+    }
+</ul>
 
 <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);">
     <button @onclick="TakePhoto" style="padding: 10px 20px; font-size: 18px;">Take Photo</button>
