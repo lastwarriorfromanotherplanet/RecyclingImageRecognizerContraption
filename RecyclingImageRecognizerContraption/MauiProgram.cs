@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RecyclingImageRecognizerContraption.Components.Data;
+using RecyclingImageRecognizerContraption.Resources.Service;
 
 namespace RecyclingImageRecognizerContraption
 {
@@ -17,30 +18,26 @@ namespace RecyclingImageRecognizerContraption
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
 
+            //database setup
+            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "LaPorte.db3");
+            builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<LaPorteService>(s, dbPath));
+
             builder.Services.AddMauiBlazorWebView();
 
             builder.Services.AddLogging();
             builder.Services.AddSingleton(MediaPicker.Default);
 
-            builder.Services.AddSingleton<AppDbContext>();
+            
+            builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Logging.AddDebug();
 
             var app = builder.Build();
 
-            //android db check
-            using (var scope = app.Services.CreateScope())
-            {
-                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                db.InitializeDatabase().Wait();
-            }
-
-            //string dbPath = Path.Combine(FileSystem.AppDataDirectory, "recycle.db");
-            //builder.Services.AddDbContext<AppDbContext>(options =>
-            //    options.UseSqlite($"Data Source={dbPath}"));
+            
 
 
 #if DEBUG
-            builder.Services.AddBlazorWebViewDeveloperTools();
-    		builder.Logging.AddDebug();
+            
             
 #endif
 
