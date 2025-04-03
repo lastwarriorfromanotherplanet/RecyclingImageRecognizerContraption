@@ -4,9 +4,31 @@
 
 @using Microsoft.EntityFrameworkCore;
 @using RecyclingImageRecognizerContraption.Components.Data;
+@using RecyclingImageRecognizerContraption.Resources.Models;
+
+<p>@status</p>
 
 @code {
     private string? imagePath;
+
+    private string? status;
+
+    private async Task AddSampleItemAsync()
+    {
+        var item = new LaPorte
+            {
+                Name = "Aluminum Can",
+                Category = "Metal",
+                DescriptionText = "Soda can",
+                IsRecyclable = true
+            };
+
+        if (App.LaPorteService != null)
+        {
+            await App.LaPorteService.AddItemAsync(item);
+            status = App.LaPorteService.StatusMessage;
+        }
+    }
 
     private async Task TakePhoto()
     {
@@ -32,5 +54,9 @@
 
 
 <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);">
+    <button @onclick="AddSampleItemAsync">Add Sample Item</button>
+
+
     <button @onclick="TakePhoto" style="padding: 10px 20px; font-size: 18px;">Take Photo</button>
+
 </div>
