@@ -2,42 +2,50 @@
 using SQLite;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RecyclingImageRecognizerContraption.Resources.Service;
 
 public class LaPorteService(string dbPath)
 {
-    private SQLiteConnection _connection;
+    private SQLiteAsyncConnection _connection;
     string _dbPath = dbPath;
     public string? StatusMessage;
 
-    private void Init()
+    private async Task Init()
     {
         if (_connection != null)
-        {
             return;
-        }
-        _connection = new SQLiteConnection(_dbPath);
-        _connection.CreateTable<LaPorte>();
+
+        _connection = new SQLiteAsyncConnection(_dbPath);
+        await _connection.CreateTableAsync<LaPorte>();
     }
-    public List<LaPorte> GetItems()
+
+    public async Task<List<LaPorte>> GetItemsAsync()
     {
-        
         try
         {
-            Init();
-            return _connection.Table<LaPorte>().ToList();
+            await Init();
+            return await _connection.Table<LaPorte>().ToListAsync();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            StatusMessage = "Failed to get data;";
+            StatusMessage = $"Failed to get data: {ex.Message}";
+            return new List<LaPorte>();
         }
-        return new List<LaPorte>();
-
     }
-    
+
+    public async Task AddItemAsync(LaPorte item)
+    {
+        try
+        {
+            await Init();
+            await _connection.InsertAsync(item);
+            StatusMessage = "Item added successfully";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to add item: {ex.Message}";
+        }
+    }
 }
