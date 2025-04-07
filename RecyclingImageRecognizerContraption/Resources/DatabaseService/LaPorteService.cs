@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RecyclingImageRecognizerContraption.Resources.Service;
+namespace RecyclingImageRecognizerContraption.Resources.DatabaseService;
 
 public class LaPorteService(string dbPath)
 {
@@ -35,12 +35,12 @@ public class LaPorteService(string dbPath)
         }
     }
 
-    public async Task AddItemAsync(LaPorte item)
+    public async Task AddItemListAsync(List<LaPorte> itemList)
     {
         try
         {
             await Init();
-            await _connection.InsertAsync(item);
+            await _connection.InsertAllAsync(itemList);
             StatusMessage = "Item added successfully";
         }
         catch (Exception ex)
@@ -48,4 +48,6 @@ public class LaPorteService(string dbPath)
             StatusMessage = $"Failed to add item: {ex.Message}";
         }
     }
+
+
 }
