@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using RecyclingImageRecognizerContraption.Components.Data;
-using RecyclingImageRecognizerContraption.Resources.Service;
-
+using RecyclingImageRecognizerContraption.Resources.DatabaseService;
 namespace RecyclingImageRecognizerContraption
 {
     public static class MauiProgram

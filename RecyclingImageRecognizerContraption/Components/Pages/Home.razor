@@ -1,10 +1,12 @@
-@page "/"
+﻿@page "/"
+
 
 @inject IJSRuntime JS
+@inject LaPorteService LaPorteService
 
 @using Microsoft.EntityFrameworkCore;
-@using RecyclingImageRecognizerContraption.Components.Data;
 @using RecyclingImageRecognizerContraption.Resources.Models;
+@using RecyclingImageRecognizerContraption.Resources.DatabaseService;
 
 <p>@status</p>
 
@@ -13,22 +15,26 @@
 
     private string? status;
 
-    private async Task AddSampleItemAsync()
-    {
-        var item = new LaPorte
-            {
-                Name = "Aluminum Can",
-                Category = "Metal",
-                DescriptionText = "Soda can",
-                IsRecyclable = true
-            };
+    private List<LaPorte> items = new();
 
-        if (App.LaPorteService != null)
+    protected override async Task OnInitializedAsync()
+    {
+        // Ensures the database is initialized (CreateTableAsync runs in your service)
+        items = await LaPorteService.GetItemsAsync();
+
+        if (items.Count == 0)
         {
-            await App.LaPorteService.AddItemAsync(item);
-            status = App.LaPorteService.StatusMessage;
+            var dbSeeder = new AddDatabase(LaPorteService);
+            await dbSeeder.FillDatabase();
+            items = await LaPorteService.GetItemsAsync(); // Refresh list after adding
+            status = "Database initialized with sample data!";
+        }
+        else
+        {
+            status = $"Loaded {items.Count} item(s) from the database.";
         }
     }
+
 
     private async Task TakePhoto()
     {
@@ -51,10 +57,20 @@
 <h1>Recycling Recognition App</h1>
 
 
+@if (items?.Any() == true)
+{
+    <ul>
+        @foreach (var item in items)
+        {
+            <li>@item.Name - @item.Category (@(item.IsRecyclable ? "♻️" : "🚫"))</li>
+        }
+    </ul>
+}
 
 
 <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);">
-    <button @onclick="AddSampleItemAsync">Add Sample Item</button>
+    <!-- <button @onclick="AddDatabase">Add Sample Item</button> -->
+
 
 
     <button @onclick="TakePhoto" style="padding: 10px 20px; font-size: 18px;">Take Photo</button>

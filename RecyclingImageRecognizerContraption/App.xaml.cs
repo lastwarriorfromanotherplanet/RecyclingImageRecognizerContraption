@@ -1,4 +1,4 @@
-﻿using RecyclingImageRecognizerContraption.Resources.Service;
+﻿using RecyclingImageRecognizerContraption.Resources.DatabaseService;
 namespace RecyclingImageRecognizerContraption;
 
 
