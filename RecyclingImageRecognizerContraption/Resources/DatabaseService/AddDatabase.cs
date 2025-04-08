@@ -314,7 +314,7 @@ public class AddDatabase(LaPorteService laPorteService)
             {
                 Name = "Candles",
                 Category = "Trash",
-                DescriptionText = "Household items that are in good condition can often be sold at a yard sale, given away, or donated to charity. Put items in poor condition in the trash.\n",
+                DescriptionText = "Household items that are in good condition can often be sold at a yard sale, given away, or donated to charity. Put items in poor condition in the trash.",
                 IsRecyclable = false,
                 HasHaulerInfo = true,
                 HasReuseOptions = true

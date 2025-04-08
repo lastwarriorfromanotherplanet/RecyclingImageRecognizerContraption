@@ -1,61 +1,16 @@
 ﻿@page "/"
 
-
 @inject IJSRuntime JS
 @inject LaPorteService LaPorteService
 
-@using Microsoft.EntityFrameworkCore;
-@using RecyclingImageRecognizerContraption.Resources.Models;
-@using RecyclingImageRecognizerContraption.Resources.DatabaseService;
-
-<p>@status</p>
-
-@code {
-    private string? imagePath;
-
-    private string? status;
-
-    private List<LaPorte> items = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Ensures the database is initialized (CreateTableAsync runs in your service)
-        items = await LaPorteService.GetItemsAsync();
-
-        if (items.Count == 0)
-        {
-            var dbSeeder = new AddDatabase(LaPorteService);
-            await dbSeeder.FillDatabase();
-            items = await LaPorteService.GetItemsAsync(); // Refresh list after adding
-            status = "Database initialized with sample data!";
-        }
-        else
-        {
-            status = $"Loaded {items.Count} item(s) from the database.";
-        }
-    }
-
-
-    private async Task TakePhoto()
-    {
-        var photo = await MediaPicker.CapturePhotoAsync();
-        if (photo != null)
-        {
-            var stream = await photo.OpenReadAsync();
-            var filePath = Path.Combine(FileSystem.CacheDirectory, photo.FileName);
-
-            using (var fileStream = File.OpenWrite(filePath))
-            {
-                await stream.CopyToAsync(fileStream);
-            }
-
-            imagePath = filePath;
-        }
-    }
-}
+@using Microsoft.EntityFrameworkCore
+@using RecyclingImageRecognizerContraption.Resources.Models
+@using RecyclingImageRecognizerContraption.Resources.DatabaseService
+@using RecyclingImageRecognizerContraption.Components.Layout;
 
 <h1>Recycling Recognition App</h1>
 
+<p>@status</p>
 
 @if (items?.Any() == true)
 {
@@ -67,12 +22,59 @@
     </ul>
 }
 
+<NavMenu OnTakePhoto="TakePhoto" OnShowFilePicker="ShowFilePicker" />
 
-<div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);">
-    <!-- <button @onclick="AddDatabase">Add Sample Item</button> -->
+@code {
+    private string? imagePath;
+    private string? status;
+    private List<LaPorte> items = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        items = await LaPorteService.GetItemsAsync();
 
+        if (items.Count == 0)
+        {
+            var dbSeeder = new AddDatabase(LaPorteService);
+            await dbSeeder.FillDatabase();
+            items = await LaPorteService.GetItemsAsync();
+            status = "Database initialized with sample data!";
+        }
+        else
+        {
+            status = $"Loaded {items.Count} item(s) from the database.";
+        }
+    }
 
-    <button @onclick="TakePhoto" style="padding: 10px 20px; font-size: 18px;">Take Photo</button>
+    private async Task TakePhoto()
+    {
+        var photo = await MediaPicker.CapturePhotoAsync();
+        if (photo != null)
+        {
+            var stream = await photo.OpenReadAsync();
+            var filePath = Path.Combine(FileSystem.CacheDirectory, photo.FileName);
 
-</div>
+            using var fileStream = File.OpenWrite(filePath);
+            await stream.CopyToAsync(fileStream);
+
+            imagePath = filePath;
+            status = $"Took photo: {photo.FileName}";
+        }
+    }
+
+    private async Task ShowFilePicker()
+    {
+        var result = await FilePicker.PickAsync();
+        if (result != null)
+        {
+            var stream = await result.OpenReadAsync();
+            var filePath = Path.Combine(FileSystem.CacheDirectory, result.FileName);
+
+            using var fileStream = File.OpenWrite(filePath);
+            await stream.CopyToAsync(fileStream);
+
+            imagePath = filePath;
+            status = $"Picked file: {result.FileName}";
+        }
+    }
+}
