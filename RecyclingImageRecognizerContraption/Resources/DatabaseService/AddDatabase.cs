@@ -211,7 +211,7 @@ public class AddDatabase(LaPorteService laPorteService)
             new()
             {
                 Name = "Bicycles, Tricycles, and Scooters",
-                Category = "",
+                Category = "Bulky Items",
                 DescriptionText = "Donation or reuse is the preferred option for items in good condition. Alternatively bring items to a metal recycler/ scrap yard. ",
                 IsRecyclable = false,
                 HasHaulerInfo = true,
@@ -309,8 +309,32 @@ public class AddDatabase(LaPorteService laPorteService)
                 IsRecyclable = false,
                 HasCollectionRequirements = true,
                 HasAboutComposting = true,
-            }
-
+            },
+            new()
+            {
+                Name = "Candles",
+                Category = "Trash",
+                DescriptionText = "Household items that are in good condition can often be sold at a yard sale, given away, or donated to charity. Put items in poor condition in the trash.\n",
+                IsRecyclable = false,
+                HasHaulerInfo = true,
+                HasReuseOptions = true
+            },
+            new()
+            {
+                Name = "Candy Wrappers",
+                Category = "Trash",
+                DescriptionText = "Place items that are not hazardous or recyclable in the trash. Be careful with things like broken glass to prevent accidental injuries.",
+                IsRecyclable = false,
+                HasHaulerInfo = true
+            },
+            new()
+            {
+                Name = "Capacitors",
+                Category = "Miscellaneous",
+                DescriptionText = "Please call us at (219) 363-1450 or (219) 326-0014 for more information",
+                IsRecyclable = false
+            },
+            
 
         };
 
