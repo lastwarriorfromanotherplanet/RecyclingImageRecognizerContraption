@@ -77,4 +77,10 @@
         <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.11" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+      <PackageReference Include="Xamarin.TensorFlow.Lite">
+        <Version>2.16.1.4</Version>
+      </PackageReference>
+    </ItemGroup>
+
 </Project>

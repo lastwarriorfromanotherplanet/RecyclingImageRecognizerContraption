@@ -1,32 +1,55 @@
-﻿@* <div class="top-row ps-3 navbar navbar-dark"> *@
-@*     <div class="container-fluid"> *@
-@*         <a class="navbar-brand" href="">RecyclingImageRecognizerContraption</a> *@
-@*     </div> *@
-@* </div> *@
+﻿@* Optional top nav (commented out) *@
+@* <div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">RecyclingImageRecognizerContraption</a>
+    </div>
+</div> *@
 
-@* <input type="checkbox" title="Navigation menu" class="navbar-toggler" /> *@
+@inject NavigationManager NavigationManager
 
 <div class="bottom-nav">
     <button @onclick="TakePhoto" class="nav-button">
         <i class="fas fa-camera"></i>
         <span>Camera</span>
     </button>
-
-    <button @onclick="ShowFilePicker" class="nav-button">
+    <button @onclick="NavigateToCategorySearch" class="nav-button">
         <i class="fas fa-file"></i>
         <span>File</span>
     </button>
 </div>
 
-
+@* @if (Categories?.Any() == true) *@
+@* { *@
+@*     <div class="category-panel"> *@
+@*         <h3>Categories</h3> *@
+@*         <div class="category-scroll"> *@
+@*             @foreach (var category in Categories) *@
+@*             { *@
+@*                 <div class="category-item" @onclick="() => OnCategorySelected.InvokeAsync(category)"> *@
+@*                     @category *@
+@*                 </div> *@
+@*             } *@
+@*         </div> *@
+@*     </div> *@
+@* } *@
+@* else *@
+@* { *@
+@*     <p style="padding: 0.5rem;">No categories available.</p> *@
+@* } *@
 
 @code {
+    private void NavigateToCategorySearch()
+    {
+        NavigationManager.NavigateTo("/CategorySearch");
+    }
+
+
     [Parameter] public EventCallback OnTakePhoto { get; set; }
     [Parameter] public EventCallback OnShowFilePicker { get; set; }
+    [Parameter] public List<string?>? Categories { get; set; }
+    [Parameter] public EventCallback<string?> OnCategorySelected { get; set; }
 
     private async Task TakePhoto() => await OnTakePhoto.InvokeAsync();
     private async Task ShowFilePicker() => await OnShowFilePicker.InvokeAsync();
-
-
 }
 

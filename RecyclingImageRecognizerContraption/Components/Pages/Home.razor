@@ -12,17 +12,9 @@
 
 <p>@status</p>
 
-@if (items?.Any() == true)
-{
-    <ul>
-        @foreach (var item in items)
-        {
-            <li>@item.Name - @item.Category (@(item.IsRecyclable ? "♻️" : "🚫"))</li>
-        }
-    </ul>
-}
+<NavMenu OnTakePhoto="TakePhoto" OnShowFilePicker="LoadCategories" />
 
-<NavMenu OnTakePhoto="TakePhoto" OnShowFilePicker="ShowFilePicker" />
+@* <button @onclick="NavigateToCategorySearch">View Categories</button> *@
 
 @code {
     private string? imagePath;
@@ -62,19 +54,54 @@
         }
     }
 
-    private async Task ShowFilePicker()
+    // private async Task ShowFilePicker()
+    // {
+    //     var result = await FilePicker.PickAsync();
+    //     if (result != null)
+    //     {
+    //         var stream = await result.OpenReadAsync();
+    //         var filePath = Path.Combine(FileSystem.CacheDirectory, result.FileName);
+
+    //         using var fileStream = File.OpenWrite(filePath);
+    //         await stream.CopyToAsync(fileStream);
+
+    //         imagePath = filePath;
+    //         status = $"Picked file: {result.FileName}";
+    //     }
+    // }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    private void NavigateToCategorySearch()
     {
-        var result = await FilePicker.PickAsync();
-        if (result != null)
-        {
-            var stream = await result.OpenReadAsync();
-            var filePath = Path.Combine(FileSystem.CacheDirectory, result.FileName);
-
-            using var fileStream = File.OpenWrite(filePath);
-            await stream.CopyToAsync(fileStream);
-
-            imagePath = filePath;
-            status = $"Picked file: {result.FileName}";
-        }
+        NavigationManager.NavigateTo("/CategorySearch");
     }
+
+
+
+
+    private List<string?> categoryList = new();
+
+    private async Task LoadCategories()
+    {
+        var dbPath = Path.Combine(FileSystem.AppDataDirectory, "LaPorte.db3");
+        var service = new LaPorteService(dbPath); 
+        categoryList = await service.GetUniqueCategoriesAsync();
+
+        if (categoryList.Count == 0)
+            status = "No categories found.";
+        else
+            status = "Categories loaded.";
+    }
+
+    private async Task HandleCategoryClick(string? category)
+    {
+        status = $"You clicked on {category}";
+        await Task.CompletedTask; 
+    }
+
+
+
+
 }
