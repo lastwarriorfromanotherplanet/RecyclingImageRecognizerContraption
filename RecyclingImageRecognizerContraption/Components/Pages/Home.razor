@@ -7,6 +7,7 @@
 @using RecyclingImageRecognizerContraption.Resources.Models
 @using RecyclingImageRecognizerContraption.Resources.DatabaseService
 @using RecyclingImageRecognizerContraption.Components.Layout;
+@using RecyclingImageRecognizerContraption.Resources.AWS_Connector;
 
 <h1>Recycling Recognition App</h1>
 
@@ -46,29 +47,36 @@
             var stream = await photo.OpenReadAsync();
             var filePath = Path.Combine(FileSystem.CacheDirectory, photo.FileName);
 
-            using var fileStream = File.OpenWrite(filePath);
-            await stream.CopyToAsync(fileStream);
+            using (var fileStream = File.OpenWrite(filePath))
+            {
+                await stream.CopyToAsync(fileStream);
+            } 
+
 
             imagePath = filePath;
             status = $"Took photo: {photo.FileName}";
+
+
+            var extension = Path.GetExtension(photo.FileName)?.ToLower(); // jpg or png checker
+
+            status = $"Took photo: {photo.FileName} | Format: {extension} | Path: {filePath}";
+
+
+            ImageUploader imageUploader = new();
+            try
+            {
+                var result = await imageUploader.SendImageAsync(imagePath);
+                status += $" | Server response: {result}";
+            }
+            catch (Exception ex)
+            {
+                status += $" | Upload failed: {ex.Message}";
+            }
+
         }
     }
 
-    // private async Task ShowFilePicker()
-    // {
-    //     var result = await FilePicker.PickAsync();
-    //     if (result != null)
-    //     {
-    //         var stream = await result.OpenReadAsync();
-    //         var filePath = Path.Combine(FileSystem.CacheDirectory, result.FileName);
-
-    //         using var fileStream = File.OpenWrite(filePath);
-    //         await stream.CopyToAsync(fileStream);
-
-    //         imagePath = filePath;
-    //         status = $"Picked file: {result.FileName}";
-    //     }
-    // }
+   
 
     [Inject]
     NavigationManager NavigationManager { get; set; }

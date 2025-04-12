@@ -136,7 +136,7 @@ public class AddDatabase(LaPorteService laPorteService)
             new()
             {
                 Name = "Baby Wipes Plastic Packaging",
-                Category = "trash",
+                Category = "Trash",
                 DescriptionText = "Baby Wipes Plastic Packaging\nPlace items that are not hazardous or recyclable in the trash. Be careful with things like broken glass to prevent accidental injuries.",
                 IsRecyclable = false,
                 HasHaulerInfo = true
@@ -151,7 +151,7 @@ public class AddDatabase(LaPorteService laPorteService)
             new()
             {
                 Name = "Balloons",
-                Category = "trash",
+                Category = "Trash",
                 DescriptionText = "Place items that are not hazardous or recyclable in the trash. Be careful with things like broken glass to prevent accidental injuries.",
                 IsRecyclable = false,
                 HasHaulerInfo = true
@@ -167,7 +167,7 @@ public class AddDatabase(LaPorteService laPorteService)
             new()
             {
                 Name = "Bamboo Cutlery",
-                Category = "trash",
+                Category = "Trash",
                 DescriptionText = "Place items that are not hazardous or recyclable in the trash. Be careful with things like broken glass to prevent accidental injuries.",
                 IsRecyclable = false,
                 HasHaulerInfo = true

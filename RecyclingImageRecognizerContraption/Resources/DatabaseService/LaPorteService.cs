@@ -69,6 +69,24 @@ public class LaPorteService(string dbPath)
         }
     }
 
+    public async Task<List<LaPorte>> GetItemsByCategoryAsync(string category)
+    {
+        try
+        {
+            await Init();
+            return await _connection.Table<LaPorte>()
+                .Where(x => x.Category == category)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to get items by category: {ex.Message}";
+            return new List<LaPorte>();
+        }
+    }
+
+
+
 
 
 }

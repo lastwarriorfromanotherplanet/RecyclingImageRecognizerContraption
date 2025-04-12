@@ -1,6 +1,7 @@
 ﻿@page "/CategorySearch"
 @inject IJSRuntime JS
 @inject LaPorteService LaPorteService
+@inject NavigationManager NavigationManager
 
 @using Microsoft.EntityFrameworkCore
 @using RecyclingImageRecognizerContraption.Resources.Models
@@ -14,7 +15,7 @@
     <div class="category-scroll-container">
         @foreach (var category in categoryList)
         {
-            <div class="category-card" @onclick="() => HandleCategoryClick(category)">
+            <div class="category-card" @onclick="() => NavigateToCategory(category)">
                 @category
             </div>
         }
@@ -42,9 +43,9 @@ else
             : "Categories loaded.";
     }
 
-    private async Task HandleCategoryClick(string? category)
+    private void NavigateToCategory(string? category)
     {
-        status = $"You clicked on {category}";
-        await Task.CompletedTask;
+        if (!string.IsNullOrWhiteSpace(category))
+            NavigationManager.NavigateTo($"/ViewCategory/{Uri.EscapeDataString(category)}");
     }
 }
