@@ -49,5 +49,26 @@ public class LaPorteService(string dbPath)
         }
     }
 
+    public async Task<List<string?>> GetUniqueCategoriesAsync()
+    {
+        try
+        {
+            await Init();
+            var allItems = await _connection.Table<LaPorte>().ToListAsync();
+            return allItems
+                .Where(x => !string.IsNullOrEmpty(x.Category))
+                .Select(x => x.Category)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to get categories: {ex.Message}";
+            return new List<string?>();
+        }
+    }
+
+
 
 }

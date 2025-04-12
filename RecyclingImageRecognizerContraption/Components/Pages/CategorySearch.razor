@@ -1,0 +1,50 @@
+﻿@page "/CategorySearch"
+@inject IJSRuntime JS
+@inject LaPorteService LaPorteService
+
+@using Microsoft.EntityFrameworkCore
+@using RecyclingImageRecognizerContraption.Resources.Models
+@using RecyclingImageRecognizerContraption.Resources.DatabaseService
+@using RecyclingImageRecognizerContraption.Components.Layout;
+
+<h2 class="text-xl font-bold mb-4">Select a Category</h2>
+
+@if (categoryList?.Any() == true)
+{
+    <div class="category-scroll-container">
+        @foreach (var category in categoryList)
+        {
+            <div class="category-card" @onclick="() => HandleCategoryClick(category)">
+                @category
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-gray-500 italic">No categories available.</p>
+}
+
+<p class="mt-4 text-sm text-green-700">@status</p>
+
+@code {
+    private List<string?> categoryList = new();
+    private string? status;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var dbPath = Path.Combine(FileSystem.AppDataDirectory, "LaPorte.db3");
+        var service = new LaPorteService(dbPath);
+        categoryList = await service.GetUniqueCategoriesAsync();
+
+        status = categoryList.Count == 0
+            ? "No categories found."
+            : "Categories loaded.";
+    }
+
+    private async Task HandleCategoryClick(string? category)
+    {
+        status = $"You clicked on {category}";
+        await Task.CompletedTask;
+    }
+}
