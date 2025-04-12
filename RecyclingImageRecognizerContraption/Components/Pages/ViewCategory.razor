@@ -1,0 +1,53 @@
+﻿@page "/ViewCategory/{Category}"
+@inject LaPorteService LaPorteService
+@using RecyclingImageRecognizerContraption.Resources.DatabaseService
+@using RecyclingImageRecognizerContraption.Resources.Models
+
+
+<h2>Items in "@Category"</h2>
+
+@if (items == null)
+{
+    <p>Loading...</p>
+}
+else if (!items.Any())
+{
+    <p>No items found for this category.</p>
+}
+else
+{
+    @* <ul> *@
+    @*     @foreach (var item in items) *@
+    @*     { *@
+    @*         <button @onclick="@(() => NavigateToItem(item.Name))">@item.Name</button> *@
+    @*     } *@
+    @* </ul> *@
+
+    <div class="category-scroll-container">
+        @foreach (var item in items)
+        {
+            <div class="category-card" @onclick="() => NavigateToItem(item.Name)">
+                @item.Name
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public string Category { get; set; } = string.Empty;
+
+    private List<LaPorte> items = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await LaPorteService.GetItemsByCategoryAsync(Category);
+    }
+
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    private void NavigateToItem(string name)
+    {
+        NavigationManager.NavigateTo($"/ViewItem/{Uri.EscapeDataString(name)}");
+    }
+}
