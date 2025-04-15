@@ -7,16 +7,63 @@
 
 @inject NavigationManager NavigationManager
 
-<div class="bottom-nav">
-    <button @onclick="TakePhoto" class="nav-button">
+<div class="nav">
+    <div class="left-side">
+        <button @onclick="TakePhoto" class="nav-button">
         <i class="fas fa-camera"></i>
         <span>Camera</span>
-    </button>
-    <button @onclick="NavigateToCategorySearch" class="nav-button">
-        <i class="fas fa-file"></i>
-        <span>File</span>
-    </button>
+		</button>
+	</div>
+    <div class="right-side">
+        <button @onclick="NavigateToCategorySearch" class="nav-button">
+            <i class="fas fa-file"></i>
+            <span>Search</span>
+		</button>
+	</div>
 </div>
+<style>
+    .nav {
+        flex: 1;
+        display: flex;
+        width: 100vw;
+        height: 100%;
+        justify-content: space-between;
+        align-items: stretch;
+    }
+
+    .left-side,
+    .right-side {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+    }
+
+    .nav-button {
+        width: 90%;
+        height: 100%;
+        font-size: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: none;
+        border-radius: 10px;
+        background-color: #007BFF;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .nav-button:hover {
+            background-color: #0056b3;
+        }
+
+        .nav-button i {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+</style>
 
 @* @if (Categories?.Any() == true) *@
 @* { *@

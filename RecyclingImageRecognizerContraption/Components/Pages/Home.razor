@@ -9,11 +9,40 @@
 @using RecyclingImageRecognizerContraption.Components.Layout;
 @using RecyclingImageRecognizerContraption.Resources.AWS_Connector;
 
-<h1>Recycling Recognition App</h1>
+<style>
+    
+    .app-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+    }
 
-<p>@status</p>
+    .app-header {
+        text-align: center;
+        padding: 1rem;
+        background-color: #f0f0f0;
+        font-size: 1.8rem;
+        font-weight: bold;
+        flex-shrink: 0; /* prevent header from shrinking */
+    }
 
-<NavMenu OnTakePhoto="TakePhoto" OnShowFilePicker="LoadCategories" />
+    html, body{
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+</style>
+
+<div class="app-container">
+    <div class="app-header"> Recycling Recognition App</div>
+
+    <div class="status-text">@status</div>
+
+    <NavMenu OnTakePhoto="TakePhoto" OnShowFilePicker="LoadCategories" />
+</div>
+
 
 @* <button @onclick="NavigateToCategorySearch">View Categories</button> *@
 
@@ -35,7 +64,7 @@
         }
         else
         {
-            status = $"Loaded {items.Count} item(s) from the database.";
+            status = "";/* $"Loaded {items.Count} item(s) from the database."; */
         }
     }
 
