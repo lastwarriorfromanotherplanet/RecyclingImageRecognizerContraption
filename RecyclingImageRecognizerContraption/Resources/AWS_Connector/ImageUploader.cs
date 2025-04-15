@@ -16,7 +16,7 @@ public class ImageUploader
 
     public async Task<string> SendImageAsync(string imagePath)
     {
-        var url = "http://54.196.169.74:8000/predict-image"; 
+        var url = "http://54.196.169.74:5000/predict"; 
 
         using var multipartContent = new MultipartFormDataContent();
         using var fileStream = File.OpenRead(imagePath);
