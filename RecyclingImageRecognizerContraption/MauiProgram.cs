@@ -29,6 +29,7 @@ namespace RecyclingImageRecognizerContraption
             builder.Services.AddBlazorWebViewDeveloperTools();
             builder.Logging.AddDebug();
 
+
             var app = builder.Build();
 
             

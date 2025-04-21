@@ -1,5 +1,6 @@
-﻿@page "/ViewItem/{Name}"
+﻿@page "/viewItem/{Name}"
 @inject LaPorteService LaPorteService
+@inject NavigationManager NavigationManager
 
 @using RecyclingImageRecognizerContraption.Resources.Models
 @using RecyclingImageRecognizerContraption.Resources.DatabaseService;
@@ -29,6 +30,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         var all = await LaPorteService.GetItemsAsync();
-        item = all.FirstOrDefault(x => x.Name == Name);
+        item = all.FirstOrDefault(x =>
+            x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) ||  // exact match for Category page
+            x.Name.Replace(" ", "_").ToLower() == Name.ToLower()         // slug match for prediction
+            );
     }
 }

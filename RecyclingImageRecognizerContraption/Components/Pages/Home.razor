@@ -8,6 +8,11 @@
 @using RecyclingImageRecognizerContraption.Resources.DatabaseService
 @using RecyclingImageRecognizerContraption.Components.Layout;
 @using RecyclingImageRecognizerContraption.Resources.AWS_Connector;
+@using Microsoft.Maui.Storage;
+@using System.Text.Json
+@using System.Text;
+
+
 
 <style>
     
@@ -27,6 +32,8 @@
         flex-shrink: 0; /* prevent header from shrinking */
     }
 
+
+
     html, body{
         height: 100%;
         margin: 0;
@@ -40,6 +47,20 @@
 
     <div class="status-text">@status</div>
 
+    @if (isLoading)
+{
+        @if (isLoading)
+        {
+            <div class="loading-message">
+                <p>Analyzing image<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></p>
+            </div>
+        }
+
+}
+
+    <!-- <button @onclick="PickFileFromDevice">Choose Photo From Device</button> -->
+
+
     <NavMenu OnTakePhoto="TakePhoto" OnShowFilePicker="LoadCategories" />
 </div>
 
@@ -47,6 +68,9 @@
 @* <button @onclick="NavigateToCategorySearch">View Categories</button> *@
 
 @code {
+    private string? predictionString;
+    private bool isLoading = false;
+
     private string? imagePath;
     private string? status;
     private List<LaPorte> items = new();
@@ -68,6 +92,75 @@
         }
     }
 
+    // private async Task PickFileFromDevice()
+    // {
+    //     MainThread.BeginInvokeOnMainThread(() =>
+    //     {
+    //         isLoading = true;
+    //     });
+
+    //     predictionString = null;
+    //     try
+    //     {
+    //         var fileResult = await FilePicker.PickAsync(new PickOptions
+    //             {
+    //                 PickerTitle = "Pick an image",
+    //                 FileTypes = FilePickerFileType.Images
+    //             });
+
+    //         if (fileResult is null)
+    //         {
+    //             status = "No file selected.";
+    //             return;
+    //         }
+
+    //         Create a unique local path to avoid file conflicts
+    //         var filePath = Path.Combine(FileSystem.CacheDirectory,
+    //             Guid.NewGuid().ToString() + Path.GetExtension(fileResult.FileName));
+
+    //         Copy the file safely from picker to local path
+    //         using (var stream = await fileResult.OpenReadAsync())
+    //         {
+    //             using (var fileStream = File.Open(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+    //             {
+    //                 await stream.CopyToAsync(fileStream);
+    //             }
+    //         }
+
+    //         Tiny delay in case Android needs time to release the handle
+    //         await Task.Delay(50);
+
+    //         imagePath = filePath;
+    //         status = $"Picked image: {fileResult.FileName}";
+
+    //         Upload it
+    //         ImageUploader imageUploader = new();
+    //         var result = await imageUploader.SendImageAsync(imagePath);
+
+
+    //         var prediction = JsonSerializer.Deserialize<PredictionResponse>(result);
+
+    //         var predictedValue = prediction?.Prediction;
+
+    //         await Task.Run(() => WaitForPredictionAndProcess(predictedValue));
+
+
+    //         Only hit this if no prediction found
+    //         status += $" | Server response: {result}";
+
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         status = $"Error: {ex.Message}";
+    //     }
+    // }
+
+
+    
+
+
+
+
     private async Task TakePhoto()
     {
         var photo = await MediaPicker.CapturePhotoAsync();
@@ -88,7 +181,7 @@
 
             var extension = Path.GetExtension(photo.FileName)?.ToLower(); // jpg or png checker
 
-            status = $"Took photo: {photo.FileName} | Format: {extension} | Path: {filePath}";
+            //status = $"Took photo: {photo.FileName} | Format: {extension} | Path: {filePath}";
 
 
             ImageUploader imageUploader = new();
@@ -103,6 +196,8 @@
             }
 
         }
+
+
     }
 
    
@@ -138,6 +233,10 @@
         await Task.CompletedTask; 
     }
 
+    public class PredictionResponse
+    {
+        public string? Prediction { get; set; }
+    }
 
 
 
