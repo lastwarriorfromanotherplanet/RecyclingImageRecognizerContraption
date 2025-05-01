@@ -32,12 +32,12 @@ namespace RecyclingImageRecognizerContraption
 
             var app = builder.Build();
 
-            
+
 
 
 #if DEBUG
             
-            
+
 #endif
 
             return builder.Build();

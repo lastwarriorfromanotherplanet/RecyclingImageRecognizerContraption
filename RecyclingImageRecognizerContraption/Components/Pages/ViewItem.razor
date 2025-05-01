@@ -7,6 +7,21 @@
 
 <h3>Item Details: @item?.Name</h3>
 
+<style>
+    .home-button {
+        background-color: #0078d7;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+    .home-button:hover {
+        background-color: #005fa3;
+    }
+</style>
+
 @if (item == null)
 {
     <p>Loading...</p>
@@ -22,6 +37,8 @@ else
     </div>
 }
 
+<button @onclick="GoHome" class="home-button">🏠 Home</button>
+
 @code {
     [Parameter] public string Name { get; set; } = string.Empty;
 
@@ -34,5 +51,10 @@ else
             x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) ||  // exact match for Category page
             x.Name.Replace(" ", "_").ToLower() == Name.ToLower()         // slug match for prediction
             );
+    }
+
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
     }
 }

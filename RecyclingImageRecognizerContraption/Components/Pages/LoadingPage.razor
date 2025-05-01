@@ -1,4 +1,4 @@
-﻿@page "/LoadingPage"
+﻿@page "/LoadingPage/{ServerResponse}"
 @inject IJSRuntime JS
 @inject LaPorteService LaPorteService
 @inject NavigationManager NavigationManager
@@ -7,9 +7,33 @@
 @using RecyclingImageRecognizerContraption.Resources.Models
 @using RecyclingImageRecognizerContraption.Resources.DatabaseService
 @using RecyclingImageRecognizerContraption.Components.Layout;
+@using System.Text.Json;
 
-
+<h3>Analyzing Image...</h3>
+<p>Prediction: @prediction</p>
 
 @code {
-    
+    [Parameter]
+    public string ServerResponse { get; set; } = string.Empty;
+
+    string prediction = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        try
+        {
+            var json = JsonDocument.Parse(Uri.UnescapeDataString(ServerResponse));
+            var prediction = json.RootElement.GetProperty("prediction").GetString();
+
+            if (!string.IsNullOrWhiteSpace(prediction))
+            {
+                // Redirect to ViewItem.razor
+                NavigationManager.NavigateTo($"/viewItem/{prediction}");
+            }
+        }
+        catch
+        {
+            prediction = "Couldn't parse prediction!";
+        }
+    }
 }

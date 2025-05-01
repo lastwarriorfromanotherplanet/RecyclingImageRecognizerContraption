@@ -92,68 +92,7 @@
         }
     }
 
-    // private async Task PickFileFromDevice()
-    // {
-    //     MainThread.BeginInvokeOnMainThread(() =>
-    //     {
-    //         isLoading = true;
-    //     });
-
-    //     predictionString = null;
-    //     try
-    //     {
-    //         var fileResult = await FilePicker.PickAsync(new PickOptions
-    //             {
-    //                 PickerTitle = "Pick an image",
-    //                 FileTypes = FilePickerFileType.Images
-    //             });
-
-    //         if (fileResult is null)
-    //         {
-    //             status = "No file selected.";
-    //             return;
-    //         }
-
-    //         Create a unique local path to avoid file conflicts
-    //         var filePath = Path.Combine(FileSystem.CacheDirectory,
-    //             Guid.NewGuid().ToString() + Path.GetExtension(fileResult.FileName));
-
-    //         Copy the file safely from picker to local path
-    //         using (var stream = await fileResult.OpenReadAsync())
-    //         {
-    //             using (var fileStream = File.Open(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
-    //             {
-    //                 await stream.CopyToAsync(fileStream);
-    //             }
-    //         }
-
-    //         Tiny delay in case Android needs time to release the handle
-    //         await Task.Delay(50);
-
-    //         imagePath = filePath;
-    //         status = $"Picked image: {fileResult.FileName}";
-
-    //         Upload it
-    //         ImageUploader imageUploader = new();
-    //         var result = await imageUploader.SendImageAsync(imagePath);
-
-
-    //         var prediction = JsonSerializer.Deserialize<PredictionResponse>(result);
-
-    //         var predictedValue = prediction?.Prediction;
-
-    //         await Task.Run(() => WaitForPredictionAndProcess(predictedValue));
-
-
-    //         Only hit this if no prediction found
-    //         status += $" | Server response: {result}";
-
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         status = $"Error: {ex.Message}";
-    //     }
-    // }
+    
 
 
     
@@ -188,7 +127,8 @@
             try
             {
                 var result = await imageUploader.SendImageAsync(imagePath);
-                status += $" | Server response: {result}";
+                var encodedResult = Uri.EscapeDataString(result); // to safely pass JSON
+                NavigationManager.NavigateTo($"/LoadingPage/{encodedResult}");
             }
             catch (Exception ex)
             {
