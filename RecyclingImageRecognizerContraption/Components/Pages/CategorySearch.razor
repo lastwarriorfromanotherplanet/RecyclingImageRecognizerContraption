@@ -37,10 +37,6 @@ else
         var dbPath = Path.Combine(FileSystem.AppDataDirectory, "LaPorte.db3");
         var service = new LaPorteService(dbPath);
         categoryList = await service.GetUniqueCategoriesAsync();
-
-        status = categoryList.Count == 0
-            ? "No categories found."
-            : "Categories loaded.";
     }
 
     private void NavigateToCategory(string? category)

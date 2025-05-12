@@ -5,8 +5,6 @@
 @using RecyclingImageRecognizerContraption.Resources.Models
 @using RecyclingImageRecognizerContraption.Resources.DatabaseService;
 
-<h3>Item Details: @item?.Name</h3>
-
 <style>
     .home-button {
         background-color: #0078d7;
@@ -29,11 +27,10 @@
 else
 {
     <div class="item-details">
-        <p><strong>Name:</strong> @item.Name</p>
+        <h2>@item.Name</h2>
         <p><strong>Category:</strong> @item.Category</p>
         <p><strong>Description:</strong> @item.DescriptionText</p>
-        <p><strong>IsRecyclable:</strong> @(item.IsRecyclable ? "Yes" : "No")</p>
-        
+        <p>@(item.IsRecyclable ? "This item is recyclable" : "This item is not recyclable")</p>
     </div>
 }
 
